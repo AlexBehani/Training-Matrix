@@ -12,7 +12,7 @@ Set LEmployee = db.OpenRecordset("LookupEmployees")
 
 LEmployee.AddNew
 LEmployee!FullName = FullName
-LEmployee!inactive = False
+LEmployee!Inactive = False
 LEmployee.Update
 
 
@@ -55,7 +55,7 @@ Set LEmployee = db.OpenRecordset("SELECT Inactive FROM LookupEmployees WHERE ID=
 If LEmployee.RecordCount > 0 Then
     LEmployee.MoveFirst
     LEmployee.Edit
-    LEmployee!inactive = Not (LEmployee!inactive)
+    LEmployee!Inactive = Not (LEmployee!Inactive)
     LEmployee.Update
 End If
 

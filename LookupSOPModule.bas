@@ -12,7 +12,7 @@ Set LSOP = db.OpenRecordset("LookupSOPs")
 
 LSOP.AddNew
 LSOP!SOP_Name = SOPName
-LSOP!inactive = False
+LSOP!Inactive = False
 LSOP.Update
 
 
@@ -56,7 +56,7 @@ Set LSOP = db.OpenRecordset("SELECT Inactive FROM LookupSOPs WHERE ID=" & id)
 If LSOP.RecordCount > 0 Then
     LSOP.MoveFirst
     LSOP.Edit
-    LSOP!inactive = Not (LSOP!inactive)
+    LSOP!Inactive = Not (LSOP!Inactive)
     LSOP.Update
 End If
 

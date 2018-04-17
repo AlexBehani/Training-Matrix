@@ -12,7 +12,7 @@ Set LGroup = db.OpenRecordset("LookupGroups")
 
 LGroup.AddNew
 LGroup!Group_Name = GroupName
-LGroup!inactive = False
+LGroup!Inactive = False
 LGroup.Update
 
 
@@ -56,7 +56,7 @@ Set LGroup = db.OpenRecordset("SELECT Inactive FROM LookupGroups WHERE ID=" & id
 If LGroup.RecordCount > 0 Then
     LGroup.MoveFirst
     LGroup.Edit
-    LGroup!inactive = Not (LGroup!inactive)
+    LGroup!Inactive = Not (LGroup!Inactive)
     LGroup.Update
 End If
 

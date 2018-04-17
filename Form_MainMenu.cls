@@ -31,6 +31,13 @@ Private Sub Command60_Click()
  DoCmd.OpenForm "LookupInterface"
 End Sub
 
+
+Private Sub EmployeesCommand_Click()
+
+DoCmd.Close acForm, "MainMenu"
+DoCmd.OpenForm "EmployeeInterface"
+End Sub
+
 Private Sub ExitCommand_Click()
 If (MsgBox("Exit?", vbQuestion + vbYesNo, "") = vbYes) Then DoCmd.Quit
 End Sub
@@ -69,4 +76,8 @@ End Sub
 Private Sub WorkOrder_Click()
 DoCmd.Close acForm, "MainMenu"
 DoCmd.OpenForm "WOInterfaceForm"
+End Sub
+
+Private Sub SOPCommand_Click()
+
 End Sub
