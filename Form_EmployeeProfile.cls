@@ -17,6 +17,15 @@ DoCmd.Close acForm, "EmployeeProfile"
 DoCmd.OpenForm "MainMenu"
 End Sub
 
+Private Sub Command34_Click()
+
+Set Trn = New TrainingClass
+Call Trn.LoadEmployee(Me.Fname & " " & Me.Lname, Me.GroupCombo, Me.SupervisorCombo)
+Call Trn.EmployeeTrigger
+
+
+End Sub
+
 Private Sub SaveCommand_Click()
 Set Emp = New EmployeeClass
 
@@ -25,8 +34,11 @@ If Em_Field Then Exit Sub
 
 Call Emp.FormLoad(Me.Fname, Me.Lname, Me.SupervisorCombo, _
                     Me.GroupCombo, Nz(Me.IsSupervisor, False), Nz(Me.Inactive, False))
-
+                    
 Call Emp.SaveEmployee
+Set Trn = New TrainingClass
+Call Trn.LoadEmployee(Me.Fname & " " & Me.Lname, Me.GroupCombo, Me.SupervisorCombo)
+Call Trn.EmployeeTrigger
 
 MsgBox "Done", vbInformation, ""
 Set Emp = Nothing

@@ -10,10 +10,7 @@ Attribute VB_Exposed = False
 Option Compare Database
 Option Explicit
 
-Private Sub Command2_Click()
-DoCmd.Close acForm, "LookupInterface"
-DoCmd.OpenForm "EmployeeForm"
-End Sub
+
 
 Private Sub Command3_Click()
 
@@ -22,6 +19,17 @@ Private Sub Command3_Click()
 End Sub
 
 Private Sub EmployeeCommand_Click()
-DoCmd.Close acForm, "LookupInterface"
-DoCmd.OpenForm "EmployeeForm"
+
+    DoCmd.Close acForm, "LookupInterface"
+    DoCmd.OpenForm "EmployeeForm"
+End Sub
+
+Private Sub GroupCommand_Click()
+    DoCmd.Close acForm, "LookupInterface"
+    DoCmd.OpenForm "LookupGroup"
+End Sub
+
+Private Sub SOPCommand_Click()
+    DoCmd.Close acForm, "LookupInterface"
+    DoCmd.OpenForm "LookupSOP"
 End Sub

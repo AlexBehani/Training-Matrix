@@ -32,6 +32,11 @@ Private Sub Command60_Click()
 End Sub
 
 
+Private Sub CompleteCommand_Click()
+DoCmd.Close acForm, "MainMenu"
+DoCmd.OpenForm "CompleteForm"
+End Sub
+
 Private Sub EmployeesCommand_Click()
 
 DoCmd.Close acForm, "MainMenu"
@@ -63,6 +68,11 @@ DoCmd.Close acForm, "MainMenu"
 DoCmd.OpenForm "PMGenerationForm"
 End Sub
 
+Private Sub GroupCommand_Click()
+DoCmd.Close acForm, "MainMenu"
+DoCmd.OpenForm "GroupInterface"
+End Sub
+
 Private Sub ReportCommand_Click()
 DoCmd.OpenForm "ReportInterface"
 DoCmd.Close acForm, "MainMenu"
@@ -78,6 +88,12 @@ DoCmd.Close acForm, "MainMenu"
 DoCmd.OpenForm "WOInterfaceForm"
 End Sub
 
-Private Sub SOPCommand_Click()
+Private Sub RevCommand_Click()
+DoCmd.Close acForm, "MainMenu"
+DoCmd.OpenForm "RevInterface"
+End Sub
 
+Private Sub SOPCommand_Click()
+    DoCmd.Close acForm, "MainMenu"
+    DoCmd.OpenForm "SOPInterface"
 End Sub

@@ -24,8 +24,12 @@ If (MsgBox(SOP & vbNewLine & "Is the correct?", vbQuestion + vbYesNo, "?") = vbN
 MsgBox "Please reenter the SOP name", vbInformation, "Try again"
 Exit Sub
 Else
+If Not (UniqueSOP(SOP)) Then
+    MsgBox "SOP is already entered", vbCritical, ""
+    Exit Sub
+End If
 Call AddLSOP(SOP)
-Me.SOP.Requery
+Me.SOPList.Requery
 End If
 End Sub
 

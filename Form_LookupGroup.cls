@@ -22,11 +22,15 @@ If Nz(Group, "") = "" Then
 End If
 
 If (MsgBox(Group & vbNewLine & "Is the correct?", vbQuestion + vbYesNo, "?") = vbNo) Then
-MsgBox "Please reenter the Group name", vbInformation, "Try again"
-Exit Sub
+    MsgBox "Please reenter the Group name", vbInformation, "Try again"
+    Exit Sub
 Else
-Call AddLGroup(Group)
-Me.GroupList.Requery
+    If Not (UniqueGroup(Group)) Then
+        MsgBox "The group is already entered", vbCritical, ""
+        Exit Sub
+    End If
+    Call AddLGroup(Group)
+    Me.GroupList.Requery
 End If
 End Sub
 

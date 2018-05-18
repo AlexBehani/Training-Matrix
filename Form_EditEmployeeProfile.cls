@@ -28,15 +28,26 @@ End Sub
 
 Private Sub SaveCommand_Click()
 
+    Dim Condtion As Boolean
+
     If Em_Field Then Exit Sub
+    
+    If EmpEdit.Group <> Me.GroupCombo Then Condtion = True Else Condtion = False
     
     Call EmpEdit.FormLoad(Me.Fname, Me.Lname, Me.SupervisorCombo, _
                         Me.GroupCombo, Nz(Me.IsSupervisor, False), Nz(Me.Inactive, False))
     
     Call EmpEdit.UpdateEmployee
 
-    MsgBox "Done", vbInformation, ""
     Set EmpEdit = Nothing
+    
+    If Condtion Then
+        Set Trn = New TrainingClass
+        Call Trn.LoadEmployee(Me.Fname & " " & Me.Lname, _
+                               Me.GroupCombo, Me.SupervisorCombo)
+        Call Trn.EmployeeTrigger
+    End If
+    MsgBox "Done", vbInformation, ""
     DoCmd.Close acForm, "EditEmployeeProfile"
     DoCmd.OpenForm "MainMenu"
 

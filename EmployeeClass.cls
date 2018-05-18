@@ -40,14 +40,14 @@ Dim em As Recordset
 
 Set db = CurrentDb
 Set em = db.OpenRecordset("SELECT * FROM Employee WHERE FullName = '" & FlName & "'")
-
+em.MoveFirst
 With em
     FirstName = !FirstName
     LastName = !LastName
     FullName = !FullName
     Inactive = !Inactive
     Group = !GroupName
-    Supervisor = !Supervisor
+    Supervisor = Nz(!Supervisor, "")
     IsSupervisor = !IsSupervisor
 End With
 'em.Update

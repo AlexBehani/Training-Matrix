@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "Form_SOPInterface"
+Attribute VB_Name = "Form_RevInterface"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = True
@@ -26,8 +26,8 @@ Set RevEdit = New RevisionClass
 
 SOPEdit.LoadRecord (Me.EditCombo)
 RevEdit.LoadRecord (Me.EditCombo)
-DoCmd.Close acForm, "SOPInterface"
-DoCmd.OpenForm "EditSOPProfile"
+DoCmd.Close acForm, "RevInterface"
+DoCmd.OpenForm "EditRevProfile"
 
 
 
@@ -37,6 +37,6 @@ DoCmd.OpenForm "EditSOPProfile"
 End Sub
 
 Private Sub ExitCommand_Click()
-    DoCmd.Close acForm, "SOPInterface"
+    DoCmd.Close acForm, "RevInterface"
     DoCmd.OpenForm "MainMenu"
 End Sub

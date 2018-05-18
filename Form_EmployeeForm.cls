@@ -24,6 +24,11 @@ If (MsgBox(FN & vbNewLine & "Is the name correct?", vbQuestion + vbYesNo, "?") =
 MsgBox "Please reenter the full name", vbInformation, "Try again"
 Exit Sub
 Else
+If Not (UniqueEmployee(FN)) Then
+    MsgBox FN & " is already entered", vbCritical, ""
+    Exit Sub
+End If
+
 Call AddEmployee(FN)
 Me.EmployeeList.Requery
 End If

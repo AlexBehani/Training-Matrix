@@ -14,6 +14,7 @@ Public Fname As String
 Public Lname As String
 
 
+
 Property Let User(value As String)
 CurrentUser = value
 End Property
