@@ -20,6 +20,7 @@ Public Supervisor As String
 Public Completed As Boolean
 Public CompletedDate As Date
 Public TrnId As Integer
+Public GracePeriod As Integer
 
 
 Sub LoadEmployee(FullN As String, GroupN As String, _
@@ -50,6 +51,7 @@ Str = "SELECT Groups.GroupName, SOP.SOPName, SOP.SOPTitle, SOP.CurrentRev " & _
 "FROM Revision INNER JOIN (Groups INNER JOIN SOP ON Groups.GroupName = SOP.F_GroupName) ON Revision.SOPName = SOP.SOPName " & _
 "WHERE (((SOP.Inactive)=No)) AND GroupName='" & GroupName & "'"
 
+Call LoadGracePeriod
 Set db = CurrentDb
 'Set Training = db.OpenRecordset(Str)
 Set GSR = db.OpenRecordset(Str)
@@ -65,7 +67,7 @@ If GSR.RecordCount > 0 Then
             !Group = GroupName
             !SOP = GSR!SOPName
             !Revision = GSR!CurrentRev
-            !DueDate = DateAdd("d", 14, Date)
+            !DueDate = DateAdd("d", GracePeriod, Date)
             !Completed = False
         End With
         Training.Update
@@ -95,6 +97,7 @@ Str = "SELECT DISTINCT Employee.FullName, Groups.GroupName, SOP.SOPName, SOP.SOP
 "INNER JOIN SOP ON Groups.GroupName = SOP.F_GroupName) ON Revision.SOPName = SOP.SOPName " & _
 "WHERE (((Employee.Inactive)=False) AND ((SOP.Inactive)=False)) AND SOP.SOPName='" & SOPName & "'"
 
+Call LoadGracePeriod
 Set db = CurrentDb
 'Set Training = db.OpenRecordset(Str)
 Set GSR = db.OpenRecordset(Str)
@@ -110,7 +113,7 @@ If GSR.RecordCount > 0 Then
             !Group = GSR!GroupName
             !SOP = SOPName
             !Revision = Revision
-            !DueDate = DateAdd("d", 14, Date)
+            !DueDate = DateAdd("d", GracePeriod, Date)
             !Completed = False
         End With
         Training.Update
@@ -129,38 +132,40 @@ End Sub
 
 
 
-Sub ArchiveTrainingRecord()
+Sub DeleteTrainingRecord()
 
 Dim db As Database
-Dim Training As Recordset
-Dim GSR As Recordset
+'Dim Training As Recordset
+'Dim GSR As Recordset
 Dim Str As String
 
-Str = "SELECT id, Inactive " & _
+Str = "DELETE " & _
 "FROM TrainingTable WHERE" & _
 " SOP='" & SOPName & "' AND Revision ='" & Revision & "' AND Completed=False"
 
 Set db = CurrentDb
-Set Training = db.OpenRecordset(Str)
 
-If Training.RecordCount > 0 Then
-    
-    Training.MoveFirst
-    Do While Not Training.EOF
-        Training.Edit
-        With Training
-            !Inactive = True
-        End With
-        Training.Update
-        Training.MoveNext
-    Loop
-    
-    
-End If
+db.Execute Str
+'Set Training = db.OpenRecordset(Str)
+'
+'If Training.RecordCount > 0 Then
+'
+'    Training.MoveFirst
+'    Do While Not Training.EOF
+'        Training.Edit
+'        With Training
+'            !Inactive = True
+'        End With
+'        Training.Update
+'        Training.MoveNext
+'    Loop
+'
+'
+'End If
 
 Set db = Nothing
-Set GSR = Nothing
-Set Training = Nothing
+'Set GSR = Nothing
+'Set Training = Nothing
 
 
 End Sub
@@ -190,11 +195,67 @@ End If
 Set db = Nothing
 Set TT = Nothing
 
-
-
 End Sub
 
 
 Sub LoadID(id As Integer)
 Let TrnId = id
+End Sub
+
+
+Sub ObseleteTraining()
+Dim db As Database
+Dim TT As Recordset
+
+Set db = CurrentDb
+Set TT = db.OpenRecordset("SELECT Inactive FROM TrainingTable WHERE Employee ='" & FullName & "' AND Completed= False")
+If TT.RecordCount > 0 Then
+    
+    TT.MoveFirst
+    Do While Not TT.EOF
+        TT.Edit
+        TT!Inactive = True
+        TT.Update
+        TT.MoveNext
+    Loop
+
+End If
+Set db = Nothing
+Set TT = Nothing
+
+End Sub
+
+Sub RestoreTraining()
+Dim db As Database
+Dim TT As Recordset
+
+Set db = CurrentDb
+Set TT = db.OpenRecordset("SELECT Inactive FROM TrainingTable WHERE Employee ='" & FullName & "' AND Completed= False")
+If TT.RecordCount > 0 Then
+    
+    TT.MoveFirst
+    Do While Not TT.EOF
+        TT.Edit
+        TT!Inactive = False
+        TT.Update
+        TT.MoveNext
+    Loop
+
+End If
+Set db = Nothing
+Set TT = Nothing
+
+End Sub
+
+Sub LoadGracePeriod()
+Dim db As Database
+Dim GP As Recordset
+
+Set db = CurrentDb
+Set GP = db.OpenRecordset("GracePeriod", , dbReadOnly)
+GP.MoveFirst
+Let GracePeriod = GP!G_Period
+
+Set db = Nothing
+Set GP = Nothing
 End Sub
