@@ -21,40 +21,42 @@ Public Completed As Boolean
 Public CompletedDate As Date
 Public TrnId As Integer
 Public GracePeriod As Integer
+Public EmailAdd As String
 
 
 Sub LoadEmployee(FullN As String, GroupN As String, _
-                    Superv As String)
+                    Superv As String, EmailAddress As String)
 
 Let FullName = FullN
 Let GroupName = GroupN
 Let Supervisor = Superv
+Let EmailAdd = EmailAddress
 
 End Sub
 
-Sub LoadRevision(Rev As String, SOP As String)
+Sub LoadRevision(rev As String, sop As String)
 
-Let Revision = Rev
-Let SOPName = SOP
+Let Revision = rev
+Let SOPName = sop
 
 End Sub
 
 
-Sub EmployeeTrigger()
+Function EmployeeTrigger() As Recordset
 
 Dim db As Database
 Dim Training As Recordset
 Dim GSR As Recordset
-Dim Str As String
+Dim str As String
 
-Str = "SELECT Groups.GroupName, SOP.SOPName, SOP.SOPTitle, SOP.CurrentRev " & _
+str = "SELECT Groups.GroupName, SOP.SOPName, SOP.SOPTitle, SOP.CurrentRev " & _
 "FROM Revision INNER JOIN (Groups INNER JOIN SOP ON Groups.GroupName = SOP.F_GroupName) ON Revision.SOPName = SOP.SOPName " & _
 "WHERE (((SOP.Inactive)=No)) AND GroupName='" & GroupName & "'"
 
 Call LoadGracePeriod
 Set db = CurrentDb
 'Set Training = db.OpenRecordset(Str)
-Set GSR = db.OpenRecordset(Str)
+Set GSR = db.OpenRecordset(str)
 
 If GSR.RecordCount > 0 Then
     
@@ -65,7 +67,7 @@ If GSR.RecordCount > 0 Then
         With Training
             !Employee = FullName
             !Group = GroupName
-            !SOP = GSR!SOPName
+            !sop = GSR!SOPName
             !Revision = GSR!CurrentRev
             !DueDate = DateAdd("d", GracePeriod, Date)
             !Completed = False
@@ -74,7 +76,7 @@ If GSR.RecordCount > 0 Then
         GSR.MoveNext
     Loop
     
-    
+   Set EmployeeTrigger = GSR
 End If
 
 Set db = Nothing
@@ -82,17 +84,17 @@ Set GSR = Nothing
 Set Training = Nothing
 
 
-End Sub
+End Function
 
 
-Sub RevisionTrigger()
+Function RevisionTrigger() As Recordset
 
 Dim db As Database
 Dim Training As Recordset
 Dim GSR As Recordset
-Dim Str As String
+Dim str As String
 
-Str = "SELECT DISTINCT Employee.FullName, Groups.GroupName, SOP.SOPName, SOP.SOPTitle, Employee.Supervisor " & _
+str = "SELECT DISTINCT Employee.FullName, Groups.GroupName, SOP.SOPName, SOP.SOPTitle, Employee.Supervisor " & _
 "FROM Revision INNER JOIN ((Groups INNER JOIN Employee ON Groups.GroupName = Employee.GroupName) " & _
 "INNER JOIN SOP ON Groups.GroupName = SOP.F_GroupName) ON Revision.SOPName = SOP.SOPName " & _
 "WHERE (((Employee.Inactive)=False) AND ((SOP.Inactive)=False)) AND SOP.SOPName='" & SOPName & "'"
@@ -100,7 +102,7 @@ Str = "SELECT DISTINCT Employee.FullName, Groups.GroupName, SOP.SOPName, SOP.SOP
 Call LoadGracePeriod
 Set db = CurrentDb
 'Set Training = db.OpenRecordset(Str)
-Set GSR = db.OpenRecordset(Str)
+Set GSR = db.OpenRecordset(str)
 
 If GSR.RecordCount > 0 Then
     
@@ -111,7 +113,7 @@ If GSR.RecordCount > 0 Then
         With Training
             !Employee = GSR!FullName
             !Group = GSR!GroupName
-            !SOP = SOPName
+            !sop = SOPName
             !Revision = Revision
             !DueDate = DateAdd("d", GracePeriod, Date)
             !Completed = False
@@ -119,53 +121,54 @@ If GSR.RecordCount > 0 Then
         Training.Update
         GSR.MoveNext
     Loop
+        
     
     
 End If
-
+Set RevisionTrigger = GSR
 Set db = Nothing
 Set GSR = Nothing
 Set Training = Nothing
 
 
-End Sub
-
-
+End Function
 
 Sub DeleteTrainingRecord()
 
 Dim db As Database
-'Dim Training As Recordset
-'Dim GSR As Recordset
-Dim Str As String
-
-Str = "DELETE " & _
-"FROM TrainingTable WHERE" & _
-" SOP='" & SOPName & "' AND Revision ='" & Revision & "' AND Completed=False"
-
+Dim RmvRecords As Recordset
+Dim str As String
+Dim RmvStr As String
 Set db = CurrentDb
+'str = "DELETE " & _
+'"FROM TrainingTable WHERE" & _
+'" SOP='" & SOPName & "' AND Revision ='" & Revision & "' AND Completed=False"
+str = "SELECT SOP_I.SOP, SOP_I.Group " & _
+"FROM SOP_I LEFT JOIN SOP_II ON SOP_I.Group = SOP_II.Group " & _
+"WHERE (((SOP_II.Group) Is Null))"
 
-db.Execute Str
-'Set Training = db.OpenRecordset(Str)
-'
-'If Training.RecordCount > 0 Then
-'
-'    Training.MoveFirst
-'    Do While Not Training.EOF
-'        Training.Edit
-'        With Training
-'            !Inactive = True
-'        End With
-'        Training.Update
-'        Training.MoveNext
-'    Loop
-'
-'
-'End If
+Set RmvRecords = db.OpenRecordset(str)
+If RmvRecords.RecordCount > 0 Then
+    RmvRecords.MoveFirst
+    Do While Not RmvRecords.EOF
+        RmvStr = "DELETE * FROM TrainingTable WHERE Completed =False " & _
+        "AND SOP ='" & SOPName & "' AND TrainingTable.Group ='" & RmvRecords!Group & "'"
+        db.Execute (RmvStr)
+ 
+    RmvRecords.MoveNext
+    Loop
+
+
+End If
+
+
+
+
+Set RmvRecords = Nothing
+'db.Execute str
 
 Set db = Nothing
-'Set GSR = Nothing
-'Set Training = Nothing
+
 
 
 End Sub
